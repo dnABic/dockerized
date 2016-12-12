@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  rabbit1:
+    image: "rabbitmq:3.6-management"
+    hostname: "rabbit1"
+    container_name: rabbit1
+    environment:
+      #RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      #RABBITMQ_DEFAULT_VHOST: "/de-luennen.bcm.test"
+      RABBITMQ_DEFAULT_VHOST: "/"
+      RABBITMQ_SSL_CERT_FILE: /certs/cert.pem
+      RABBITMQ_SSL_KEY_FILE: /certs/key.pem
+      RABBITMQ_SSL_CA_FILE: /certs/cacert.pem
+    ports:
+    - "15671:15671"
+    - "5671:5671"
+    volumes:
+      - /data/rabbitmq/certs:/certs
+    labels:
+      NAME: "rabbitmq1"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    external: true
