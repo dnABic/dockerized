@@ -10,9 +10,11 @@ services:
     - "9200:9200"
     - "9300:9300"
     environment:
-      ES_JAVA_OPTS: "-Xms500m -Xmx500m"
+      - ES_JAVA_OPTS: "-Xms500m -Xmx500m"
+      - ES_HEAP_SIZE=500M
     volumes:
-      - ./elasticsearch/:/elasticsearch
+      - ./elasticsearch/data:/data
+      - ./elasticsearch/conf/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
     labels:
       PROJECT: "elk"
     networks:
