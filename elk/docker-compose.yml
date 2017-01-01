@@ -6,13 +6,12 @@ services:
     image: elasticsearch:2
     hostname: elasticsearch
     container_name: elasticsearch
-    domain_name: elk-local
     ports:
     - "9200:9200"
     - "9300:9300"
     environment:
-      - ES_JAVA_OPTS: "-Xms500m -Xmx500m"
-      - ES_HEAP_SIZE=500M
+      - ES_JAVA_OPTS=-Xms500m -Xmx500m
+      - ES_HEAP_SIZE=500m
     volumes:
       - ./elasticsearch/data:/data
       - ./elasticsearch/conf/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
@@ -39,7 +38,6 @@ services:
       PROJECT: "elk"
   kibana:
     image: kibana:4.6
-    domain_name: elk-local
     hostname: kibana
     container_name: kibana
     links: 
