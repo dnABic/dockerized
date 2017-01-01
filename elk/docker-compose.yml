@@ -6,6 +6,7 @@ services:
     image: elasticsearch:2
     hostname: elasticsearch
     container_name: elasticsearch
+    domain_name: elk-local
     ports:
     - "9200:9200"
     - "9300:9300"
@@ -21,11 +22,13 @@ services:
       - docker_elk
   logstash:
     image: logstash:2.4
+    hostname: logstash
+    container_name: logstash
     links:
       - elasticsearch:elasticsearch
     ports:
       - "5000:5000"
-    command: logstash agent --debug -e 'input { log4j { mode => "server" port => "12201"} } output { elasticsearch { hosts => ["elasticsearch"] } stdout {} }'
+    command: logstash agent --debug -e 'input { stdin {  } http { port => 8080 } } output { elasticsearch { hosts => [ "elasticsearch" ] index => "elk-data-%{+YYYY.MM.dd}"} stdout { } }'
     volumes:
       - ./logstash/:/logstash
     networks:
@@ -36,6 +39,9 @@ services:
       PROJECT: "elk"
   kibana:
     image: kibana:4.6
+    domain_name: elk-local
+    hostname: kibana
+    container_name: kibana
     links: 
       - elasticsearch:elasticsearch
     ports:
@@ -48,6 +54,8 @@ services:
       - docker_elk
     depends_on:
       - elasticsearch
+    labels:
+      PROJECT: "elk"
 
 networks:
   docker_elk:
