@@ -3,7 +3,7 @@ version: '2'
 services:
   elasticsearch:
     #build: elasticsearch/
-    image: elasticsearch:2
+    image: elasticsearch:5
     hostname: elasticsearch
     container_name: elasticsearch
     ports:
@@ -11,7 +11,6 @@ services:
     - "9300:9300"
     environment:
       - ES_JAVA_OPTS=-Xms500m -Xmx500m
-      - ES_HEAP_SIZE=500m
     volumes:
       - ./elasticsearch/data:/data
       - ./elasticsearch/conf/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
@@ -20,16 +19,17 @@ services:
     networks:
       - docker_elk
   logstash:
-    image: logstash:2.4
+    image: logstash:5
     hostname: logstash
     container_name: logstash
-    links:
-      - elasticsearch:elasticsearch
+#    links:
+#     - elasticsearch:elasticsearch
     ports:
       - "5000:5000"
-    command: logstash agent --debug -e 'input { stdin {  } http { port => 8080 } } output { elasticsearch { hosts => [ "elasticsearch" ] index => "elk-data-%{+YYYY.MM.dd}"} stdout { } }'
+      - "8080:8080"
+    command: -f /etc/logstash/conf.d/
     volumes:
-      - ./logstash/:/logstash
+      - ./logstash/config:/etc/logstash/conf.d
     networks:
       - docker_elk
     depends_on:
@@ -37,17 +37,17 @@ services:
     labels:
       PROJECT: "elk"
   kibana:
-    image: kibana:4.6
+    image: kibana:5
     hostname: kibana
     container_name: kibana
-    links: 
-      - elasticsearch:elasticsearch
+#    links: 
+#      - elasticsearch:elasticsearch
     ports:
       - "5601:5601"
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
     volumes:
-      - ./kibana/config/kibana.yml:/etc/kibana/kibana.yml
+      - ./kibana/config/:/etc/kibana/
     networks:
       - docker_elk
     depends_on:
