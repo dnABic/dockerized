@@ -12,7 +12,7 @@ services:
     environment:
       - ES_JAVA_OPTS=-Xms500m -Xmx500m
     volumes:
-      - ./elasticsearch/data:/data
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
       - ./elasticsearch/conf/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
     labels:
       PROJECT: "elk"
@@ -22,8 +22,6 @@ services:
     image: logstash:5
     hostname: logstash
     container_name: logstash
-#    links:
-#     - elasticsearch:elasticsearch
     ports:
       - "5000:5000"
       - "8080:8080"
@@ -40,12 +38,11 @@ services:
     image: kibana:5
     hostname: kibana
     container_name: kibana
-#    links: 
-#      - elasticsearch:elasticsearch
     ports:
       - "5601:5601"
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - LS_HEAP_SIZE=500m
     volumes:
       - ./kibana/config/:/etc/kibana/
     networks:
