@@ -9,7 +9,6 @@ services:
       #RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
       RABBITMQ_DEFAULT_USER: "rabbitmq"
       RABBITMQ_DEFAULT_PASS: "rabbitmq"
-      #RABBITMQ_DEFAULT_VHOST: "/de-luennen.bcm.test"
       RABBITMQ_DEFAULT_VHOST: "/"
       RABBITMQ_SSL_CERT_FILE: /certs/cert.pem
       RABBITMQ_SSL_KEY_FILE: /certs/key.pem
@@ -18,7 +17,7 @@ services:
     - "15671:15671"
     - "5671:5671"
     volumes:
-      - /data/rabbitmq/certs:/certs
+      #- ./certs:/certs
     labels:
       NAME: "rabbitmq1"
     networks:
