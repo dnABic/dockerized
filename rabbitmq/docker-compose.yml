@@ -6,8 +6,8 @@ services:
     hostname: "rabbit1"
     container_name: rabbit1
     ports:
-    - "15671:15671"
-    - "5671:5671"
+    - "15672:15672"
+    - "5672:5672"
     volumes:
       #- ./certs:/certs
       - ./conf/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
