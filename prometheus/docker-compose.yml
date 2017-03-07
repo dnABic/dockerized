@@ -1,0 +1,210 @@
+version: '3'
+
+networks:
+  monitor-net:
+    driver: bridge
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v1.5.2
+    container_name: prometheus
+    hostname: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '-config.file=/etc/prometheus/prometheus.yml'
+      - '-storage.local.path=/prometheus'
+      - '-alertmanager.url=http://alertmanager:9093'
+      - '-storage.local.memory-chunks=100000'
+    restart: unless-stopped
+    depends_on:
+      - alertmanager
+      - nodeexporter
+      - cadvisor
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+    networks:
+      - monitor-net
+    labels:
+      role: "monitoring"
+      environment: "test"
+      app: "prometheus"
+
+  alertmanager:
+    image: prom/alertmanager:v0.5.1
+    container_name: alertmanager
+    hostname: alertmanager
+    volumes: 
+      - ./alertmanager/:/etc/alertmanager/
+    command:
+      - '-config.file=/etc/alertmanager/config.yml'
+      - '-storage.path=/alertmanager'
+    restart: unless-stopped
+    expose:
+      - 9093
+    ports:
+      - 9093:9093
+    networks:
+      - monitor-net
+    labels:
+      role: "monitoring"
+      environment: "test"
+      app: "alertmanager"
+
+  nodeexporter:
+    image: prom/node-exporter:v0.13.0
+    container_name: nodeexporter
+    hostname: nodeexporter
+    restart: unless-stopped
+    expose:
+      - 9100
+    ports:
+      - 9100:9100
+    networks:
+      - monitor-net
+    labels:
+      role: "monitoring"
+      environment: "test"
+      app: "nodeexporter"
+
+  cadvisor:
+    image: google/cadvisor:v0.24.1
+    container_name: cadvisor
+    hostname: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: unless-stopped
+    depends_on:
+      - rabbit1
+      - rabbit2
+      - rabbit3
+    expose:
+      - 8080
+    ports:
+      - 8081:8080
+    networks:
+      - monitor-net
+    labels:
+      role: "monitoring"
+      environment: "test"
+      app: "cadvisor"
+
+  grafana:
+    image: grafana/grafana:4.1.2
+    container_name: grafana
+    hostname: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    env_file:
+      - user.config
+    restart: unless-stopped
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    networks:
+      - monitor-net
+    labels:
+      role: "monitoring"
+      environment: "test"
+      app: "grafana"
+
+  nginx:
+    image: nginx:1.11
+    container_name: nginx
+    hostname: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    expose:
+      - 80
+    ports:
+      - "8082:80"
+    environment:
+      - NGINX_PORT=80
+    command: /bin/bash -c "nginx -g 'daemon off;'"
+    depends_on:
+      - grafana
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      role: "monitoring"
+      environment: "test"
+      app: "nginx"
+
+  rabbit1:
+    build: rabbitmq
+    container_name: rabbit1
+    hostname: rabbit1
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_NODENAME: "rabbit1"
+      RABBITMQ_CLUSTER_NODES: "{['rabbit1@rabbit1','rabbit2@rabbit2', 'rabbit3@rabbit3'], disc}"
+      RABBITMQ_TCP_LISTENERS: 5672
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+    labels:
+      role: "queue"
+      environment: "test"
+      app: "rabbitmq"
+    networks:
+      - monitor-net
+
+  rabbit2:
+    build: rabbitmq
+    container_name: rabbit2
+    hostname: rabbit2
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_NODENAME: "rabbit2"
+      RABBITMQ_CLUSTER_NODES: "{['rabbit1@rabbit1','rabbit2@rabbit2', 'rabbit3@rabbit3'], disc}"
+      RABBITMQ_TCP_LISTENERS: 5672
+      CLUSTER_WITH: "rabbit1"
+      ENABLE_RAM: "true"
+    ports:
+    - "5673:5672"
+    - "15673:15672"
+    depends_on:
+      - rabbit1
+    labels:
+      role: "queue"
+      environment: "test"
+      app: "rabbitmq"
+    networks:
+      - monitor-net
+
+  rabbit3:
+    build: rabbitmq
+    container_name: rabbit3
+    hostname: rabbit3
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_NODENAME: "rabbit3"
+      RABBITMQ_CLUSTER_NODES: "{['rabbit1@rabbit1','rabbit2@rabbit2', 'rabbit3@rabbit3'], disc}"
+      RABBITMQ_TCP_LISTENERS: 5672
+      CLUSTER_WITH: "rabbit1"
+    ports:
+    - "5674:5672"
+    - "15674:15672"
+    depends_on:
+      - rabbit1
+    labels:
+      role: "queue"
+      environment: "test"
+      app: "rabbitmq"
+    networks:
+      - monitor-net
