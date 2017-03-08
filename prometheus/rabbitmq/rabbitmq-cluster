@@ -1,6 +1,7 @@
 #!/bin/bash
 
-hostname=`hostname`
+rabbitmq-plugins enable prometheus_rabbitmq_exporter
+rabbitmq-plugins enable prometheus_process_collector
 
 if [ -z "$CLUSTER_WITH" ]; then
   echo "Running as single server"
