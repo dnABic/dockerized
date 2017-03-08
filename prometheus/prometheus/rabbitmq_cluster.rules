@@ -1,0 +1,8 @@
+ALERT rabbitmq_cluster_nodes
+  IF sum (rabbitmq_node_up{instance="rabbit1:15672",job="rabbitmq"}) < 3
+  FOR 30s
+  LABELS { severity = "critical" }
+  ANNOTATIONS {
+      summary = "RabbitMQ cluster not in full capacity",
+      description = "RabbitMQ cluster not in full capacity",
+  }
