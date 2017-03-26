@@ -217,14 +217,15 @@ services:
       - 2379:2379
       - 2380:2380
     command:
-      - '-name etcd0'
-      - '-advertise-client-urls http://etcd0:2379'
-      - '-listen-client-urls http://0.0.0.0:2379'
-      - '-initial-advertise-peer-urls http://etcd0:2380'
-      - '-listen-peer-urls http://0.0.0.0:2380'
-      - '-initial-cluster-token etcd-cluster-a'
-      - '-initial-cluster etcd0=http://etcd0:2380,etcd1=http://etcd1:2380,etcd2=http://etcd2:2380'
-      - '-initial-cluster-state new'
+      - 'etcd'
+      - "-name=etcd0"
+      - "-advertise-client-urls=http://etcd0:2379"
+      - "-listen-client-urls=http://etcd0:2379"
+      - "-initial-advertise-peer-urls=http://etcd0:2380"
+      - "-listen-peer-urls=http://etcd0:2380"
+      - "-initial-cluster-token=etcd-cluster-a"
+      - "-initial-cluster=etcd0=http://etcd0:2380,etcd1=http://etcd1:2381,etcd2=http://etcd2:2382"
+      - "-initial-cluster-state=new"
     restart: unless-stopped
     networks:
       - monitor-net
@@ -238,17 +239,18 @@ services:
     container_name: etcd1
     hostname: etcd1
     ports:
-      - 2379:2379
-      - 2380:2380
+      - 2389:2389
+      - 2381:2381
     command:
-      - '-name etcd1'
-      - '-advertise-client-urls http://etcd1:2379'
-      - '-listen-client-urls http://0.0.0.0:2379'
-      - '-initial-advertise-peer-urls http://etcd1:2380'
-      - '-listen-peer-urls http://0.0.0.0:2380'
-      - '-initial-cluster-token etcd-cluster-a'
-      - '-initial-cluster etcd0=http://etcd0:2380,etcd1=http://etcd1:2380,etcd2=http://etcd2:2380'
-      - '-initial-cluster-state new'
+      - 'etcd'
+      - "--name=etcd1"
+      - "--advertise-client-urls=http://etcd1:2389"
+      - "--listen-client-urls=http://etcd1:2389"
+      - "--initial-advertise-peer-urls=http://etcd1:2381"
+      - "--listen-peer-urls=http://etcd1:2381"
+      - "--initial-cluster-token=etcd-cluster-a"
+      - "--initial-cluster=etcd0=http://etcd0:2380,etcd1=http://etcd1:2381,etcd2=http://etcd2:2382"
+      - "--initial-cluster-state=new"
     restart: unless-stopped
     networks:
       - monitor-net
@@ -262,17 +264,18 @@ services:
     container_name: etcd2
     hostname: etcd2
     ports:
-      - 2379:2379
-      - 2380:2380
+      - 2399:2399
+      - 2382:2382
     command:
-      - '-name etcd2'
-      - '-advertise-client-urls http://etcd2:2379'
-      - '-listen-client-urls http://0.0.0.0:2379'
-      - '-initial-advertise-peer-urls http://etcd2:2380'
-      - '-listen-peer-urls http://0.0.0.0:2380'
-      - '-initial-cluster-token etcd-cluster-a'
-      - '-initial-cluster etcd0=http://etcd0:2380,etcd1=http://etcd1:2380,etcd2=http://etcd2:2380'
-      - '-initial-cluster-state new'
+      - 'etcd'
+      - "-name=etcd2"
+      - "-advertise-client-urls=http://etcd2:2399"
+      - "-listen-client-urls=http://etcd2:2399"
+      - "-initial-advertise-peer-urls=http://etcd2:2382"
+      - "-listen-peer-urls=http://etcd2:2382"
+      - "-initial-cluster-token=etcd-cluster-a"
+      - "-initial-cluster=etcd0=http://etcd0:2380,etcd1=http://etcd1:2381,etcd2=http://etcd2:2382"
+      - "-initial-cluster-state=new"
     restart: unless-stopped
     networks:
       - monitor-net
