@@ -37,6 +37,11 @@ scrape_configs:
       - targets: ['rabbit1:15672','rabbit2:15672','rabbit3:15672']
     metrics_path: /api/metrics
 
+  - job_name: 'etcd'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['etcd0:2379','etcd1:2389','etcd2:2399']
+
 #  - job_name: 'nginx'
 #    scrape_interval: 10s
 #    static_configs:

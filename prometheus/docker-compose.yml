@@ -208,3 +208,78 @@ services:
       app: "rabbitmq"
     networks:
       - monitor-net
+
+  etcd0:
+    image: quay.io/coreos/etcd:v3.1.4
+    container_name: etcd0
+    hostname: etcd0
+    ports:
+      - 2379:2379
+      - 2380:2380
+    command:
+      - 'etcd'
+      - "-name=etcd0"
+      - "-advertise-client-urls=http://etcd0:2379"
+      - "-listen-client-urls=http://etcd0:2379"
+      - "-initial-advertise-peer-urls=http://etcd0:2380"
+      - "-listen-peer-urls=http://etcd0:2380"
+      - "-initial-cluster-token=etcd-cluster-a"
+      - "-initial-cluster=etcd0=http://etcd0:2380,etcd1=http://etcd1:2381,etcd2=http://etcd2:2382"
+      - "-initial-cluster-state=new"
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      role: "database"
+      environment: "test"
+      app: "etcd"
+
+  etcd1:
+    image: quay.io/coreos/etcd:v3.1.4
+    container_name: etcd1
+    hostname: etcd1
+    ports:
+      - 2389:2389
+      - 2381:2381
+    command:
+      - 'etcd'
+      - "--name=etcd1"
+      - "--advertise-client-urls=http://etcd1:2389"
+      - "--listen-client-urls=http://etcd1:2389"
+      - "--initial-advertise-peer-urls=http://etcd1:2381"
+      - "--listen-peer-urls=http://etcd1:2381"
+      - "--initial-cluster-token=etcd-cluster-a"
+      - "--initial-cluster=etcd0=http://etcd0:2380,etcd1=http://etcd1:2381,etcd2=http://etcd2:2382"
+      - "--initial-cluster-state=new"
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      role: "database"
+      environment: "test"
+      app: "etcd"
+
+  etcd2:
+    image: quay.io/coreos/etcd:v3.1.4
+    container_name: etcd2
+    hostname: etcd2
+    ports:
+      - 2399:2399
+      - 2382:2382
+    command:
+      - 'etcd'
+      - "-name=etcd2"
+      - "-advertise-client-urls=http://etcd2:2399"
+      - "-listen-client-urls=http://etcd2:2399"
+      - "-initial-advertise-peer-urls=http://etcd2:2382"
+      - "-listen-peer-urls=http://etcd2:2382"
+      - "-initial-cluster-token=etcd-cluster-a"
+      - "-initial-cluster=etcd0=http://etcd0:2380,etcd1=http://etcd1:2381,etcd2=http://etcd2:2382"
+      - "-initial-cluster-state=new"
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      role: "database"
+      environment: "test"
+      app: "etcd"
