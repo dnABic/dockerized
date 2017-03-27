@@ -101,11 +101,13 @@ services:
       app: "cadvisor"
 
   grafana:
-    image: grafana/grafana:4.1.2
+    image: grafana/grafana:4.2.0
     container_name: grafana
     hostname: grafana
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./grafana/dashboards/:/var/lib/grafana/dashboards/
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
     depends_on:
       - prometheus
     env_file:
