@@ -101,7 +101,7 @@ services:
       app: "cadvisor"
 
   grafana:
-    image: grafana/grafana:4.1.2
+    image: grafana/grafana:4.2.0
     container_name: grafana
     hostname: grafana
     volumes:
