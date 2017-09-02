@@ -27,7 +27,7 @@ RUN echo "deb http://repo.saltstack.com/apt/ubuntu/$(lsb_release -rs)/amd64/late
     salt-api \
     salt-ssh \
     salt-syndic && \
-    pip install cherrypy docker-py halite
+    pip install cherrypy docker-py
 
 # Clean image
 RUN apt-get -yqq clean && \
