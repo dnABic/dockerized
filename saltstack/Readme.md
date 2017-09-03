@@ -1,5 +1,5 @@
 
-### Build docker image which will run saltstack by systemd
+### Build docker image which will run saltstack started by systemd
 
 
 Build it with:
