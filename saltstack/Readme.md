@@ -23,5 +23,5 @@ docker run --name=saltsystemdtest \
 Check that services are up:
 
 ```bash
-docker exec -ti saltsystemdtest bash -c 'ps auxw'
+docker exec -ti saltsystemdtest bash -c 'ps auxw --forest'
 ```
