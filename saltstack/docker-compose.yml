@@ -1,0 +1,42 @@
+version: '3'
+
+networks:
+  saltstack:
+    driver: bridge
+
+services:
+  master:
+    image: dnabic/saltstack:0.1.1
+    hostname: master
+    container_name: master
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./etc/master/:/etc/salt
+      - ./srv:/srv
+    cap_add:
+      - SYS_ADMIN
+
+  minion1:
+    image: dnabic/saltstack:0.1.1
+    hostname: minion1
+    container_name: minion1
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./etc/minion1:/etc/salt
+      - ./srv:/srv
+    cap_add:
+      - SYS_ADMIN
+
+  minion2:
+    image: dnabic/saltstack:0.1.1
+    hostname: minion2
+    container_name: minion2
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./etc/minion2:/etc/salt
+      - ./srv:/srv
+    cap_add:
+      - SYS_ADMIN
+    tmpfs:
+      - /run
+      - /run/lock
