@@ -1,2 +1,2 @@
 # dockerized
-Services running on docker
+Services running on docker.
